@@ -21,7 +21,6 @@ import { Logger } from "./logger/logger";
 import { NotificationMode, readParameter } from "./idfConfiguration";
 import { useIdfSetupSettings } from "./setup/setupValidation/espIdfSetup";
 import { getIdfSetups, getSelectedEspIdfSetup } from "./eim/getExistingSetups";
-import { getPreviousIdfSetups } from "./setup/existingIdfSetups";
 
 export async function checkExtensionSettings(
   extensionPath: string,
@@ -47,27 +46,30 @@ export async function checkExtensionSettings(
   } catch (error) {
     const msg = error.message
       ? error.message
-      : vscode.l10n.t("Checking if current install is valid throws an error.");
+      : "Checking if current install is valid throws an error.";
     Logger.error(msg, error, "checkExtensionSettings");
   }
-  const actionItems = [
-    vscode.l10n.t("Open Install manager"),
-    vscode.l10n.t("Choose from existing setups."),
-  ];
+  const openESPIDfManager = vscode.l10n.t(
+    "Open ESP-IDF Installation Manager"
+  ) as string;
+  const chooseExisting = vscode.l10n.t(
+    "Choose from existing ESP-IDF setups."
+  ) as string;
   const action = await vscode.window.showInformationMessage(
     vscode.l10n.t(
-      "The extension configuration is not valid. Choose an action: "
+      "The extension configuration is not valid. Choose an action:"
     ),
-    ...actionItems
+    openESPIDfManager,
+    chooseExisting
   );
   if (!action) {
     return;
   }
 
-  if (action === actionItems[0]) {
+  if (action === openESPIDfManager) {
     vscode.commands.executeCommand("espIdf.installManager");
     return;
-  } else if (action === actionItems[1]) {
+  } else if (action === chooseExisting) {
     await showExistingEspIDfSetups(workspace, espIdfStatusBar);
     return;
   }
@@ -86,6 +88,11 @@ export async function showExistingEspIDfSetups(
     notificationMode === NotificationMode.Notifications
       ? vscode.ProgressLocation.Notification
       : vscode.ProgressLocation.Window;
+
+  let idfSetups = await getIdfSetups(false);
+  if (idfSetups.length === 0) {
+    return;
+  }
   await vscode.window.withProgress(
     {
       cancellable: false,
@@ -97,10 +104,6 @@ export async function showExistingEspIDfSetups(
       cancelToken: vscode.CancellationToken
     ) => {
       try {
-        let idfSetups = await getIdfSetups(false);
-        if (idfSetups.length === 0) {
-          idfSetups = await getPreviousIdfSetups(false);
-        }
         const options = idfSetups.map((existingSetup) => {
           return {
             label: `ESP-IDF ${existingSetup.version} in ${existingSetup.idfPath}`,
