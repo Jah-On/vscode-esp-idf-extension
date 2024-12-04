@@ -18,9 +18,9 @@
 import * as vscode from "vscode";
 import { isCurrentInstallValid } from "./setup/setupInit";
 import { Logger } from "./logger/logger";
-import { NotificationMode, readParameter } from "./idfConfiguration";
+import { readParameter } from "./idfConfiguration";
 import { useIdfSetupSettings } from "./setup/setupValidation/espIdfSetup";
-import { getIdfSetups, getSelectedEspIdfSetup } from "./eim/getExistingSetups";
+import { getSelectedEspIdfSetup } from "./eim/getExistingSetups";
 
 export async function checkExtensionSettings(
   workspace: vscode.Uri,
@@ -32,7 +32,7 @@ export async function checkExtensionSettings(
   ) as boolean;
   try {
     const isExtensionConfigured = await isCurrentInstallValid(workspace);
-    if (isExtensionConfigured) {
+    if (showWelcomePage && isExtensionConfigured) {
       await vscode.commands.executeCommand("espIdf.welcome.start");
       return;
     }
