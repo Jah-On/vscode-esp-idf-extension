@@ -23,10 +23,13 @@ import { useIdfSetupSettings } from "./setup/setupValidation/espIdfSetup";
 import { getIdfSetups, getSelectedEspIdfSetup } from "./eim/getExistingSetups";
 
 export async function checkExtensionSettings(
-  extensionPath: string,
   workspace: vscode.Uri,
   espIdfStatusBar: vscode.StatusBarItem
 ) {
+  const showWelcomePage = readParameter(
+    "idf.showOnboardingOnInit",
+    workspace
+  ) as boolean;
   try {
     const isExtensionConfigured = await isCurrentInstallValid(workspace);
     if (isExtensionConfigured) {
@@ -48,6 +51,9 @@ export async function checkExtensionSettings(
       ? error.message
       : "Checking if current install is valid throws an error.";
     Logger.error(msg, error, "checkExtensionSettings");
+  }
+  if (!showWelcomePage) {
+    return;
   }
   const openESPIDfManager = vscode.l10n.t(
     "Open ESP-IDF Installation Manager"
