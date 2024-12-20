@@ -19,8 +19,8 @@ import * as vscode from "vscode";
 import { isCurrentInstallValid } from "./setup/setupInit";
 import { Logger } from "./logger/logger";
 import { readParameter } from "./idfConfiguration";
-import { useIdfSetupSettings } from "./setup/setupValidation/espIdfSetup";
 import { getSelectedEspIdfSetup } from "./eim/getExistingSetups";
+import { saveSettings } from "./eim/verifySetup";
 
 export async function checkExtensionSettings(
   workspace: vscode.Uri,
@@ -38,7 +38,7 @@ export async function checkExtensionSettings(
     }
     const espIdeJsonSelected = await getSelectedEspIdfSetup();
     if (espIdeJsonSelected && espIdeJsonSelected.isValid) {
-      await useIdfSetupSettings(
+      await saveSettings(
         espIdeJsonSelected,
         vscode.ConfigurationTarget.WorkspaceFolder,
         workspace,

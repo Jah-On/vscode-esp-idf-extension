@@ -8,7 +8,7 @@ This extension contributes the following settings that can be later updated in s
 - Type **Preferences: Open Settings (UI)** and select the command to open the Setting management window.
 
 .. note::
-  Please consider that ``~``, ``%VARNAME%`` and ``$VARNAME`` are not recognized when set on ANY of this extension configuration settings. You can instead set any environment variable in the path using a ``${env:VARNAME}`` such as ``${env:HOME}`` or you can refer to other configuration parameter path with ``${config:SETTINGID}`` such as ``${config:idf.espIdfPath}``.
+  Please consider that ``~``, ``%VARNAME%`` and ``$VARNAME`` are not recognized when set on ANY of this extension configuration settings. You can instead set any environment variable in the path using a ``${env:VARNAME}`` such as ``${env:HOME}`` or you can refer to other configuration parameter path with ``${config:SETTINGID}`` such as ``${config:idf.buildPath}``.
 
 The **idf.saveScope** allows you to specify where to save settings when using commands such as **Set Espressif Device Target** and other commands. Possible values are Global (User Settings), Workspace and WorkspaceFolder. Use the **Select where to Save Configuration Settings** command to choose where to save settings when using this extension commands.
 
@@ -43,27 +43,14 @@ These are the configuration settings that ESP-IDF extension contributes to your 
 +-----------------------------------+-------------------------------------------------------------------------------------------+
 | **idf.enableIdfComponentManager** | Enable IDF Component manager in build command                                             |
 +-----------------------------------+-------------------------------------------------------------------------------------------+
-| **idf.espIdfPath**                | Path to locate ESP-IDF framework (IDF_PATH)                                               |
-+-----------------------------------+-------------------------------------------------------------------------------------------+
-| **idf.espIdfPathWin**             | Path to locate ESP-IDF framework in Windows (IDF_PATH)                                    |
-+-----------------------------------+-------------------------------------------------------------------------------------------+
 | **idf.ninjaArgs**                 | Arguments for Ninja build task                                                            |
-+-----------------------------------+-------------------------------------------------------------------------------------------+
-| **idf.pythonInstallPath**         | System python absolute path used to compute ESP-IDF python virtual environment            |
-+-----------------------------------+-------------------------------------------------------------------------------------------+
-| **idf.toolsPath**                 | Path to locate ESP-IDF Tools (IDF_TOOLS_PATH)                                             |
-+-----------------------------------+-------------------------------------------------------------------------------------------+
-| **idf.toolsPathWin**              | Path to locate ESP-IDF Tools in Windows (IDF_TOOLS_PATH)                                  |
 +-----------------------------------+-------------------------------------------------------------------------------------------+
 
 
 This is how the extension uses them:
 
-1. **idf.customExtraVars** stores any custom environment variable such as OPENOCD_SCRIPTS, which is the openOCD scripts directory used in OpenOCD server startup. These variables are loaded to this extension commands process environment variables, choosing the extension variable if available, else extension commands will try to use what is already in your system PATH. **This doesn't modify your system environment outside Visual Studio Code.**
-2. **idf.espIdfPath** (or **idf.espIdfPathWin** in Windows) is used to store ESP-IDF directory path within our extension. We override Visual Studio Code process IDF_PATH if this value is available. **This doesn't modify your system environment outside Visual Studio Code.**. It is also used to compute the list of ESP-IDF tools to add to environment variable PATH and the python virtual environment path together from **idf.toolsPath** and **idf.pythonInstallPath**.
-3. **idf.pythonInstallPath** is the system python absolute path used to compute ESP-IDF python virtual environment from **idf.toolsPath** and **idf.espIdfPath** where ESP-IDF python packages will be installed and used.
-4. **idf.gitPath** (or **idf.gitPathWin** in Windows) is used in the extension to clone ESP-IDF master version or the additional supported frameworks such as ESP-ADF, ESP-MDF and Arduino-ESP32.
-5. **idf.toolsPath** (or **idf.toolsPathWin** in Windows) is used to compute the list of ESP-IDF tools to add to environment variable PATH and the python virtual environment path together from **idf.pythonInstallPath** and **idf.espIdfPath**.
+1. **idf.customExtraVars** stores any custom environment variable such as IDF_PATH, IDF_TOOLS_PATH, OPENOCD_SCRIPTS, which is the openOCD scripts directory used in OpenOCD server startup. These variables are loaded to this extension commands process environment variables, choosing the extension variable if available, else extension commands will try to use what is already in your system PATH. **This doesn't modify your system environment outside Visual Studio Code.**
+2. **idf.gitPath** (or **idf.gitPathWin** in Windows) is used in the extension to clone ESP-IDF master version or the additional supported frameworks such as ESP-ADF, ESP-MDF and Arduino-ESP32.
 
 > **NOTE**: From Visual Studio Code extension context, we can't modify your system PATH or any other environment variable. We use a modified process environment in all of this extension tasks and child processes which should not affect any other system process or extension. Please review the content of **idf.customExtraVars** in case you have issues with other extensions.
 
@@ -255,4 +242,4 @@ Use of Environment Variables in ESP-IDF settings.json and tasks.json
 
 Environment (env) variables and other ESP-IDF settings (config) current values strings can be used in other ESP-IDF setting as ``${env:VARNAME}`` and ``${config:ESPIDFSETTING}``, respectively.
 
-Example : If you want to use ``"~/esp/esp-idf"`` you can set the value of **idf.espIdfPath** to ``"${env:HOME}/esp/esp-idf"``.
+Example : If you want to use ``"~/workspace/blink"`` you can set the value of to ``"${env:HOME}/workspace/blink"``.
